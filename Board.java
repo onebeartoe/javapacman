@@ -14,20 +14,20 @@ public class Board extends JPanel
   /* For JAR File*/
   /*
   Image pacmanImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/pacman.jpg"));
-  Image pacmanUpImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/pacmanup.jpg")); 
-  Image pacmanDownImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/pacmandown.jpg")); 
-  Image pacmanLeftImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/pacmanleft.jpg")); 
-  Image pacmanRightImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/pacmanright.jpg")); 
-  Image ghost10 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost10.jpg")); 
-  Image ghost20 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost20.jpg")); 
-  Image ghost30 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost30.jpg")); 
-  Image ghost40 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost40.jpg")); 
-  Image ghost11 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost11.jpg")); 
-  Image ghost21 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost21.jpg")); 
-  Image ghost31 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost31.jpg")); 
-  Image ghost41 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost41.jpg")); 
-  Image titleScreenImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/titleScreen.jpg")); 
-  Image gameOverImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/gameOver.jpg")); 
+  Image pacmanUpImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/pacmanup.jpg"));
+  Image pacmanDownImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/pacmandown.jpg"));
+  Image pacmanLeftImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/pacmanleft.jpg"));
+  Image pacmanRightImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/pacmanright.jpg"));
+  Image ghost10 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost10.jpg"));
+  Image ghost20 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost20.jpg"));
+  Image ghost30 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost30.jpg"));
+  Image ghost40 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost40.jpg"));
+  Image ghost11 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost11.jpg"));
+  Image ghost21 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost21.jpg"));
+  Image ghost31 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost31.jpg"));
+  Image ghost41 = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/ghost41.jpg"));
+  Image titleScreenImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/titleScreen.jpg"));
+  Image gameOverImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/gameOver.jpg"));
   Image winScreenImage = Toolkit.getDefaultToolkit().getImage(Pacman.class.getResource("img/winScreen.jpg"));
   */
   /* For NOT JAR file*/
@@ -48,7 +48,6 @@ public class Board extends JPanel
   Image gameOverImage = ResourceUtils.loadImage("img/gameOver.jpg");
   Image winScreenImage = ResourceUtils.loadImage("img/winScreen.jpg");
 
-
   /* Initialize the player and ghosts */
   Player player = new Player(200,300);
   Ghost ghost1 = new Ghost(180,180);
@@ -58,6 +57,8 @@ public class Board extends JPanel
 
   /* Timer is used for playing sound effects and animations */
   long timer = System.currentTimeMillis();
+  long titleTimer = -1;
+  long gameTimer = -1;
 
   /* Dying is used to count frames in the dying animation.  If it's non-zero,
      pacman is in the process of dying */
@@ -643,5 +644,152 @@ public class Board extends JPanel
     g.setColor(Color.WHITE);
     g.drawRect(19,19,382,382);
 
+  }
+
+  public void repaintBoard()
+  {
+    if (player.teleport)
+    {
+      repaint(player.lastX-20,player.lastY-20,80,80);
+      player.teleport=false;
+    }
+    repaint(0,0,600,20);
+    repaint(0,420,600,40);
+    repaint(player.x-20,player.y-20,80,80);
+    repaint(ghost1.x-20,ghost1.y-20,80,80);
+    repaint(ghost2.x-20,ghost2.y-20,80,80);
+    repaint(ghost3.x-20,ghost3.y-20,80,80);
+    repaint(ghost4.x-20,ghost4.y-20,80,80);
+  }
+
+  /* Steps the screen forward one frame */
+  public void stepFrame(boolean New,javax.swing.Timer frameTimer )
+  {
+    /* If we aren't on a special screen than the timers can be set to -1 to disable them */
+    if (!titleScreen && !winScreen && !overScreen)
+    {
+      gameTimer = -1;
+      titleTimer = -1;
+    }
+
+    /* If we are playing the dying animation, keep advancing frames until the animation is complete */
+    if (dying>0)
+    {
+      repaint();
+      return;
+    }
+
+    /* New can either be specified by the New parameter in stepFrame function call or by the state
+       of b.New.  Update New accordingly */
+    New = New || (this.New !=0) ;
+
+    /* If this is the title screen, make sure to only stay on the title screen for 5 seconds.
+       If after 5 seconds the user hasn't started a game, start up demo mode */
+    if (titleScreen)
+    {
+      if (titleTimer == -1)
+      {
+        titleTimer = System.currentTimeMillis();
+      }
+
+      long currTime = System.currentTimeMillis();
+      if (currTime - titleTimer >= 5000)
+      {
+        titleScreen = false;
+        demo = true;
+        titleTimer = -1;
+      }
+      repaint();
+      return;
+    }
+
+    /* If this is the win screen or game over screen, make sure to only stay on the screen for 5 seconds.
+       If after 5 seconds the user hasn't pressed a key, go to title screen */
+    else if (winScreen || overScreen)
+    {
+      if (timer == -1)
+      {
+        gameTimer = System.currentTimeMillis();
+      }
+
+      long currTime = System.currentTimeMillis();
+      if (currTime - gameTimer >= 5000)
+      {
+        winScreen = false;
+        overScreen = false;
+        titleScreen = true;
+        gameTimer = -1;
+      }
+      repaint();
+      return;
+    }
+
+
+    /* If we have a normal game state, move all pieces and update pellet status */
+    if (!New)
+    {
+      /* The pacman player has two functions, demoMove if we're in demo mode and move if we're in
+         user playable mode.  Call the appropriate one here */
+      if (demo)
+      {
+        player.demoMove();
+      }
+      else
+      {
+        player.move();
+      }
+
+      /* Also move the ghosts, and update the pellet states */
+      ghost1.move();
+      ghost2.move();
+      ghost3.move();
+      ghost4.move();
+      player.updatePellet();
+      ghost1.updatePellet();
+      ghost2.updatePellet();
+      ghost3.updatePellet();
+      ghost4.updatePellet();
+    }
+
+    /* We either have a new game or the user has died, either way we have to reset the board */
+    if (stopped || New)
+    {
+      /*Temporarily stop advancing frames */
+      frameTimer.stop();
+
+      /* If user is dying ... */
+      while (dying >0)
+      {
+        /* Play dying animation. */
+        stepFrame(false,frameTimer);
+      }
+
+      /* Move all game elements back to starting positions and orientations */
+      player.currDirection='L';
+      player.direction='L';
+      player.desiredDirection='L';
+      player.x = 200;
+      player.y = 300;
+      ghost1.x = 180;
+      ghost1.y = 180;
+      ghost2.x = 200;
+      ghost2.y = 180;
+      ghost3.x = 220;
+      ghost3.y = 180;
+      ghost4.x = 220;
+      ghost4.y = 180;
+
+      /* Advance a frame to display main state*/
+      repaint(0,0,600,600);
+
+      /*Start advancing frames once again*/
+      stopped=false;
+      frameTimer.start();
+    }
+    /* Otherwise we're in a normal state, advance one frame*/
+    else
+    {
+      repaintBoard();
+    }
   }
 }
