@@ -12,26 +12,17 @@ public class GameSounds{
     /* Keeps track of whether or not the eating sound is playing*/
     boolean stopped;
 
-    Clip loadSound(String name){
-        try{
-            URL url = this.getClass().getClassLoader().getResource(name);
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioIn);
-            return clip;
-        }catch(Exception e){}
-        return null;
-    }
+
 
 /* Initialize audio files */ 
     public GameSounds(){
         stopped=true;
         // Pacman eating sound
-        nomNom = loadSound("sounds/nomnom.wav");
+        nomNom = ResourceUtils.loadSound("sounds/nomnom.wav");
         // newGame
-        newGame = loadSound("sounds/newGame.wav");
+        newGame = ResourceUtils.loadSound("sounds/newGame.wav");
         // death
-        death = loadSound("sounds/death.wav");
+        death = ResourceUtils.loadSound("sounds/death.wav");
     }
     
     /* Play pacman eating sound */
