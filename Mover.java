@@ -117,7 +117,26 @@ class Mover {
         }
         return newDirection;
     }
-
+    void step(char direction){
+        switch (direction) {
+            case 'L':
+                if (isValidDest(x - increment, y))
+                    x -= increment;
+                break;
+            case 'R':
+                if (isValidDest(x + gridSize, y))
+                    x += increment;
+                break;
+            case 'U':
+                if (isValidDest(x, y - increment))
+                    y -= increment;
+                break;
+            case 'D':
+                if (isValidDest(x, y + gridSize))
+                    y += increment;
+                break;
+        }
+    }
     /* This function is used for demoMode.  It is copied from the Ghost class.  See that for comments */
     public boolean isChoiceDest() {
         return x % gridSize == 0 && y % gridSize == 0;

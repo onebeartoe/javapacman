@@ -34,25 +34,6 @@ class Ghost extends Mover {
         if (isChoiceDest()) {
             direction = newDirection();
         }
-
-        /* If that direction is valid, move that way */
-        switch (direction) {
-            case 'L':
-                if (isValidDest(x - increment, y))
-                    x -= increment;
-                break;
-            case 'R':
-                if (isValidDest(x + gridSize, y))
-                    x += increment;
-                break;
-            case 'U':
-                if (isValidDest(x, y - increment))
-                    y -= increment;
-                break;
-            case 'D':
-                if (isValidDest(x, y + gridSize))
-                    y += increment;
-                break;
-        }
+        step(direction);
     }
 }
