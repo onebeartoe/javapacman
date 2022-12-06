@@ -6,13 +6,6 @@ class Player extends Mover {
     /* Keeps track of pellets eaten to determine end of game */
     int pelletsEaten;
 
-    /* Last location */
-    int lastX;
-    int lastY;
-
-    /* Which pellet the pacman is on top of */
-    int pelletX;
-    int pelletY;
 
     /* teleport is true when travelling through the teleport tunnels*/
     boolean teleport;
@@ -25,12 +18,6 @@ class Player extends Mover {
         super(x,y);
         teleport = false;
         pelletsEaten = 0;
-        pelletX = x / gridSize - 1;
-        pelletY = y / gridSize - 1;
-        this.lastX = x;
-        this.lastY = y;
-        this.x = x;
-        this.y = y;
         currDirection = 'L';
         desiredDirection = 'L';
     }
