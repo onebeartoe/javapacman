@@ -282,7 +282,7 @@ public class Pacman extends JApplet implements MouseListener, KeyListener
       else if (180 <= x && x <= 300)
       {
         /* Clear high scores has been clicked */
-        b.clearHighScores();
+        b.score.clearHighScores();
       }
       else if (350 <= x && x <= 420)
       {

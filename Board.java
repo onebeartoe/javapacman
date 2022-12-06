@@ -63,8 +63,7 @@ public class Board extends JPanel
   int dying=0;
  
   /* Score information */
-  int currScore;
-  int highScore;
+  Highschore score;
 
   /* if the high scores have been cleared, we have to update the top of the screen to reflect that */
   boolean clearHighScores= false;
@@ -99,66 +98,16 @@ public class Board extends JPanel
   Font font = new Font("Monospaced",Font.BOLD, 12);
 
   /* Constructor initializes state flags etc.*/
-  public Board() 
+  public Board()
   {
-    initHighScores();
+    score = new Highschore();
     sounds = new GameSounds();
-    currScore=0;
+    score.currScore=0;
     stopped=false;
     max=400;
     gridSize=20;
     New=0;
     titleScreen = true;
-  }
-
-  /* Reads the high scores file and saves it */
-  public void initHighScores()
-  {
-    File file = new File("highScores.txt");
-    Scanner sc;
-    try
-    {
-        sc = new Scanner(file);
-        highScore = sc.nextInt();
-        sc.close();
-    }
-    catch(Exception e)
-    {
-    }
-  }
-
-  /* Writes the new high score to a file and sets flag to update it on screen */
-  public void updateScore(int score)
-  {
-    PrintWriter out;
-    try
-    {
-      out = new PrintWriter("highScores.txt");
-      out.println(score);
-      out.close();
-    }
-    catch(Exception e)
-    {
-    }
-    highScore=score;
-    clearHighScores=true;
-  }
-
-  /* Wipes the high scores file and sets flag to update it on screen */
-  public void clearHighScores()
-  {
-    PrintWriter out;
-    try
-    {
-      out = new PrintWriter("highScores.txt");
-      out.println("0");
-      out.close();
-    }
-    catch(Exception e)
-    {
-    }
-    highScore=0;
-    clearHighScores=true;
   }
 
   /* Reset occurs on a new game*/
@@ -342,6 +291,13 @@ public class Board extends JPanel
     g.fillOval(x*20+28,y*20+28,4,4);
   }
 
+  private void drawGhosts(Graphics g, Image ghost10, Image ghost20, Image ghost30, Image ghost40) {
+    g.drawImage(ghost10, ghost1.x, ghost1.y, Color.BLACK, null);
+    g.drawImage(ghost20, ghost2.x, ghost2.y, Color.BLACK, null);
+    g.drawImage(ghost30, ghost3.x, ghost3.y, Color.BLACK, null);
+    g.drawImage(ghost40, ghost4.x, ghost4.y, Color.BLACK, null);
+  }
+
   /* This is the main function that draws one entire frame of the game */
   public void paint(Graphics g)
   {
@@ -392,9 +348,9 @@ public class Board extends JPanel
             else
             {
             /* Game over for player.  If relevant, update high score.  Set gameOver flag*/
-              if (currScore > highScore)
+              if (score.currScore > score.highScore)
               {
-                updateScore(currScore);
+                score.updateScore(score.currScore);
               }
               overScreen=true;
             }
@@ -450,9 +406,9 @@ public class Board extends JPanel
       g.setFont(font);
       clearHighScores= false;
       if (demo)
-        g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: "+highScore,20,10);
+        g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: "+score.highScore,20,10);
       else
-        g.drawString("Score: "+(currScore)+"\t High Score: "+highScore,20,10);
+        g.drawString("Score: "+(score.currScore)+"\t High Score: "+score.highScore,20,10);
     }
    
     /* oops is set to true when pacman has lost a life */ 
@@ -467,7 +423,7 @@ public class Board extends JPanel
       ghost2 = new Ghost(200,180);
       ghost3 = new Ghost(220,180);
       ghost4 = new Ghost(220,180);
-      currScore = 0;
+      score.currScore = 0;
       drawBoard(g);
       drawPellets(g);
       drawLives(g);
@@ -484,9 +440,9 @@ public class Board extends JPanel
       g.setColor(Color.YELLOW);
       g.setFont(font);
       if (demo)
-        g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: "+highScore,20,10);
+        g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: "+score.highScore,20,10);
       else
-        g.drawString("Score: "+(currScore)+"\t High Score: "+highScore,20,10);
+        g.drawString("Score: "+(score.currScore)+"\t High Score: "+score.highScore,20,10);
       New++;
     }
     /* Second frame of new game */
@@ -585,7 +541,7 @@ public class Board extends JPanel
       pellets[player.pelletX][player.pelletY]=false;
 
       /* Increment the score */
-      currScore += 50;
+      score.currScore += 50;
 
       /* Update the screen to reflect the new score */
       g.setColor(Color.BLACK);
@@ -593,9 +549,9 @@ public class Board extends JPanel
       g.setColor(Color.YELLOW);
       g.setFont(font);
       if (demo)
-        g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: "+highScore,20,10);
+        g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: "+score.highScore,20,10);
       else
-        g.drawString("Score: "+(currScore)+"\t High Score: "+highScore,20,10);
+        g.drawString("Score: "+(score.currScore)+"\t High Score: "+score.highScore,20,10);
 
       /* If this was the last pellet */
       if (player.pelletsEaten == 173)
@@ -603,9 +559,9 @@ public class Board extends JPanel
         /*Demo mode can't get a high score */
         if (!demo)
         {
-          if (currScore > highScore)
+          if (score.currScore > score.highScore)
           {
-            updateScore(currScore);
+            score.updateScore(score.currScore);
           }
           winScreen = true;
         }
@@ -640,19 +596,13 @@ public class Board extends JPanel
     if (ghost1.frameCount < 5)
     {
       /* Draw first frame of ghosts */
-      g.drawImage(ghost10,ghost1.x,ghost1.y,Color.BLACK,null);
-      g.drawImage(ghost20,ghost2.x,ghost2.y,Color.BLACK,null);
-      g.drawImage(ghost30,ghost3.x,ghost3.y,Color.BLACK,null);
-      g.drawImage(ghost40,ghost4.x,ghost4.y,Color.BLACK,null);
+      drawGhosts(g,ghost10,ghost20,ghost30,ghost40);
       ghost1.frameCount++;
     }
     else
     {
       /* Draw second frame of ghosts */
-      g.drawImage(ghost11,ghost1.x,ghost1.y,Color.BLACK,null);
-      g.drawImage(ghost21,ghost2.x,ghost2.y,Color.BLACK,null);
-      g.drawImage(ghost31,ghost3.x,ghost3.y,Color.BLACK,null);
-      g.drawImage(ghost41,ghost4.x,ghost4.y,Color.BLACK,null);
+      drawGhosts(g,ghost11,ghost21,ghost31,ghost41);
       if (ghost1.frameCount >=10)
         ghost1.frameCount=0;
       else
