@@ -63,11 +63,6 @@ public class Pacman extends JApplet
   */
 
 
-
-
-
-
-
   
   /* Main function simply creates a new pacman instance*/
   public static void main(String [] args)
