@@ -117,4 +117,9 @@ class Mover {
         }
         return newDirection;
     }
+
+    /* This function is used for demoMode.  It is copied from the Ghost class.  See that for comments */
+    public boolean isChoiceDest() {
+        return x % gridSize == 0 && y % gridSize == 0;
+    }
 }
