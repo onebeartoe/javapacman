@@ -1,3 +1,6 @@
+import java.util.HashSet;
+import java.util.Set;
+
 /* Both Player and Ghost inherit Mover.  Has generic functions relevant to both*/
 class Mover {
     /* Framecount is used to count animation frames*/
@@ -13,9 +16,14 @@ class Mover {
     int gridSize;
     int max;
     int increment;
+    /* Direction ghost is heading */
+    char direction;
+    /* Current ghost location */
+    int x;
+    int y;
 
     /* Generic constructor */
-    public Mover() {
+    public Mover(int x, int y) {
         gridSize = 20;
         increment = 4;
         max = 400;
@@ -25,6 +33,9 @@ class Mover {
                 state[i][j] = false;
             }
         }
+        direction = 'L';
+        this.x = x;
+        this.y = y;
     }
 
     /* Updates the state information */
@@ -39,5 +50,61 @@ class Mover {
     /* The first statements check that the x and y are inbounds.  The last statement checks the map to
        see if it's a valid location */
         return (((x) % 20 == 0) || ((y) % 20) == 0) && 20 <= x && x < 400 && 20 <= y && y < 400 && state[x / 20 - 1][y / 20 - 1];
+    }
+
+    /* Calculate newDirection for Demo and Ghost */
+    public char newDirection() {
+        int random;
+        char backwards = 'U';
+        int newX = x, newY = y;
+        int lookX = x, lookY = y;
+        Set<Character> set = new HashSet<Character>();
+        switch (direction) {
+            case 'L':
+                backwards = 'R';
+                break;
+            case 'R':
+                backwards = 'L';
+                break;
+            case 'U':
+                backwards = 'D';
+                break;
+            case 'D':
+                backwards = 'U';
+                break;
+        }
+        char newDirection = backwards;
+        while (newDirection == backwards || !isValidDest(lookX, lookY)) {
+            if (set.size() == 3) {
+                newDirection = backwards;
+                break;
+            }
+            newX = x;
+            newY = y;
+            lookX = x;
+            lookY = y;
+            random = (int) (Math.random() * 4) + 1;
+            if (random == 1) {
+                newDirection = 'L';
+                newX -= increment;
+                lookX -= increment;
+            } else if (random == 2) {
+                newDirection = 'R';
+                newX += increment;
+                lookX += gridSize;
+            } else if (random == 3) {
+                newDirection = 'U';
+                newY -= increment;
+                lookY -= increment;
+            } else if (random == 4) {
+                newDirection = 'D';
+                newY += increment;
+                lookY += gridSize;
+            }
+            if (newDirection != backwards) {
+                set.add(new Character(newDirection));
+            }
+        }
+        return newDirection;
     }
 }
