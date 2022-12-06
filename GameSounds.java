@@ -1,5 +1,4 @@
 /* Drew Schuster */
-import java.io.*;
 import java.net.URL;
 import javax.sound.sampled.*;
 
@@ -12,32 +11,30 @@ public class GameSounds{
     Clip death;
     /* Keeps track of whether or not the eating sound is playing*/
     boolean stopped;
-       
+
+    Clip loadSound(String name){
+        try{
+            URL url = this.getClass().getClassLoader().getResource(name);
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            return clip;
+        }catch(Exception e){}
+        return null;
+    }
 
 /* Initialize audio files */ 
     public GameSounds(){
         stopped=true; 
-        URL url;
-        AudioInputStream audioIn;
+
         
         try{
             // Pacman eating sound
-            url = this.getClass().getClassLoader().getResource("sounds/nomnom.wav");
-            audioIn = AudioSystem.getAudioInputStream(url);
-            nomNom = AudioSystem.getClip();
-            nomNom.open(audioIn);
-            
+            nomNom = loadSound("sounds/nomnom.wav");
             // newGame        
-            url = this.getClass().getClassLoader().getResource("sounds/newGame.wav");
-            audioIn = AudioSystem.getAudioInputStream(url);
-            newGame = AudioSystem.getClip();
-            newGame.open(audioIn);
-            
-            // death        
-            url = this.getClass().getClassLoader().getResource("sounds/death.wav");
-            audioIn = AudioSystem.getAudioInputStream(url);
-            death = AudioSystem.getClip();
-            death.open(audioIn);
+            newGame = loadSound("sounds/newGame.wav");
+            // death
+            death = loadSound("sounds/death.wav");
 
         }catch(Exception e){}
     }
