@@ -30,9 +30,7 @@ class Mover {
     /* Updates the state information */
     public void updateState(boolean[][] state) {
         for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
-                this.state[i][j] = state[i][j];
-            }
+            System.arraycopy(state[i], 0, this.state[i], 0, 20);
         }
     }
 
@@ -40,9 +38,6 @@ class Mover {
     public boolean isValidDest(int x, int y) {
     /* The first statements check that the x and y are inbounds.  The last statement checks the map to
        see if it's a valid location */
-        if ((((x) % 20 == 0) || ((y) % 20) == 0) && 20 <= x && x < 400 && 20 <= y && y < 400 && state[x / 20 - 1][y / 20 - 1]) {
-            return true;
-        }
-        return false;
+        return (((x) % 20 == 0) || ((y) % 20) == 0) && 20 <= x && x < 400 && 20 <= y && y < 400 && state[x / 20 - 1][y / 20 - 1];
     }
 }

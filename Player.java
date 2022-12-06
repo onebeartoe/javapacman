@@ -103,10 +103,7 @@ class Player extends Mover {
 
     /* This function is used for demoMode.  It is copied from the Ghost class.  See that for comments */
     public boolean isChoiceDest() {
-        if (x % gridSize == 0 && y % gridSize == 0) {
-            return true;
-        }
-        return false;
+        return x % gridSize == 0 && y % gridSize == 0;
     }
 
     /* This function is used for demoMode.  It is copied from the Ghost class.  See that for comments */
@@ -121,7 +118,7 @@ class Player extends Mover {
                 if (isValidDest(x - increment, y)) {
                     x -= increment;
                 } else if (y == 9 * gridSize && x < 2 * gridSize) {
-                    x = max - gridSize * 1;
+                    x = max - gridSize;
                     teleport = true;
                 }
                 break;
@@ -129,7 +126,7 @@ class Player extends Mover {
                 if (isValidDest(x + gridSize, y)) {
                     x += increment;
                 } else if (y == 9 * gridSize && x > max - gridSize * 2) {
-                    x = 1 * gridSize;
+                    x = gridSize;
                     teleport = true;
                 }
                 break;
@@ -187,7 +184,7 @@ class Player extends Mover {
                     if (isValidDest(x - increment, y))
                         x -= increment;
                     else if (y == 9 * gridSize && x < 2 * gridSize) {
-                        x = max - gridSize * 1;
+                        x = max - gridSize;
                         teleport = true;
                     }
                     break;
@@ -195,7 +192,7 @@ class Player extends Mover {
                     if (isValidDest(x + gridSize, y))
                         x += increment;
                     else if (y == 9 * gridSize && x > max - gridSize * 2) {
-                        x = 1 * gridSize;
+                        x = gridSize;
                         teleport = true;
                     }
                     break;
