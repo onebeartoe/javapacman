@@ -25,18 +25,13 @@ public class GameSounds{
 
 /* Initialize audio files */ 
     public GameSounds(){
-        stopped=true; 
-
-        
-        try{
-            // Pacman eating sound
-            nomNom = loadSound("sounds/nomnom.wav");
-            // newGame        
-            newGame = loadSound("sounds/newGame.wav");
-            // death
-            death = loadSound("sounds/death.wav");
-
-        }catch(Exception e){}
+        stopped=true;
+        // Pacman eating sound
+        nomNom = loadSound("sounds/nomnom.wav");
+        // newGame
+        newGame = loadSound("sounds/newGame.wav");
+        // death
+        death = loadSound("sounds/death.wav");
     }
     
     /* Play pacman eating sound */
